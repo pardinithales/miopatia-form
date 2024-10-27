@@ -7,29 +7,42 @@ from bson import ObjectId
 import json
 from flask_cors import CORS
 import time
+import certifi
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
 CORS(app)
 
-# Configuração MongoDB com timeouts menores
+# Configuração MongoDB com timeout e certificado SSL
 MONGODB_URI = "mongodb+srv://pardinithales:GLS6KUhOtANEgQvS@cluster0.uqh21.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
+print("Iniciando conexão com MongoDB...")
+client = MongoClient(
+    MONGODB_URI,
+    serverSelectionTimeoutMS=5000,
+    connectTimeoutMS=5000,
+    socketTimeoutMS=5000,
+    tlsCAFile=certifi.where()  # Adiciona certificado SSL
+)
+
 try:
-    print("Iniciando conexão com MongoDB...")
-    client = MongoClient(
-        MONGODB_URI,
-        serverSelectionTimeoutMS=5000,
-        connectTimeoutMS=5000,
-        socketTimeoutMS=5000
-    )
     # Testar a conexão
-    client.server_info()
+    db = client.get_database('miopatia_db')
+    patients = db.get_collection('patients')
+    db.command('ping')
     print("Conexão com MongoDB estabelecida com sucesso!")
-    db = client.miopatia_db
-    patients = db.patients
 except Exception as e:
-    print(f"Erro ao conectar com MongoDB: {e}")
-    raise
+    print(f"Erro na conexão inicial com MongoDB: {e}")
+    # Não raise aqui, permite que a aplicação continue mesmo com erro inicial
+
+@app.before_request
+def before_request():
+    # Verificar conexão antes de cada requisição
+    try:
+        if not hasattr(app, 'mongodb_connected'):
+            db.command('ping')
+            app.mongodb_connected = True
+    except:
+        app.mongodb_connected = False
 
 def calculate_mrc_total(data):
     mrc_fields = [
