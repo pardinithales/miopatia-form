@@ -6,7 +6,6 @@ from pymongo import MongoClient
 from bson import ObjectId
 import json
 from flask_cors import CORS
-import certifi
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
 CORS(app)
@@ -22,9 +21,19 @@ def get_database():
             serverSelectionTimeoutMS=5000,
             connectTimeoutMS=5000,
             socketTimeoutMS=5000,
-            tlsCAFile=certifi.where()
+            ssl=True,  # Habilita SSL sem depender do certifi
+            tls=True   # Habilita TLS sem depender do certifi
         )
     return get_database.client.miopatia_db
+
+@app.route('/api/health')
+def health_check():
+    try:
+        db = get_database()
+        db.command('ping')
+        return jsonify({"status": "healthy"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route('/api/mrc', methods=['POST'])
 def save_mrc_data():
@@ -70,7 +79,6 @@ def save_mrc_data():
 @app.route('/api/patients', methods=['GET'])
 def get_patients():
     try:
-        # Buscar todos os pacientes ordenados por data
         db = get_database()
         cursor = db.patients.find({}).sort('created_at', -1)
         patients_data = []
