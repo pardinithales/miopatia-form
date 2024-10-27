@@ -5,15 +5,23 @@ import os
 from pymongo import MongoClient, ASCENDING, DESCENDING
 from bson import ObjectId
 import json
-from flask_cors import CORS  # Adicionar suporte CORS
+from flask_cors import CORS
+import time
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
-CORS(app)  # Habilitar CORS para todas as rotas
+CORS(app)
 
-# Configuração MongoDB
+# Configuração MongoDB com timeouts menores
+MONGODB_URI = "mongodb+srv://pardinithales:GLS6KUhOtANEgQvS@cluster0.uqh21.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+
 try:
-    MONGODB_URI = "mongodb+srv://pardinithales:GLS6KUhOtANEgQvS@cluster0.uqh21.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-    client = MongoClient(MONGODB_URI, serverSelectionTimeoutMS=5000)
+    print("Iniciando conexão com MongoDB...")
+    client = MongoClient(
+        MONGODB_URI,
+        serverSelectionTimeoutMS=5000,
+        connectTimeoutMS=5000,
+        socketTimeoutMS=5000
+    )
     # Testar a conexão
     client.server_info()
     print("Conexão com MongoDB estabelecida com sucesso!")
@@ -41,17 +49,21 @@ def save_mrc_data():
         if not data:
             return jsonify({"error": "Dados não fornecidos"}), 400
 
+        # Converter a data
         try:
             date_obj = datetime.strptime(data.get('dataAvaliacao', ''), '%Y-%m-%d')
             data['dataAvaliacao'] = date_obj.strftime('%d/%m/%Y')
-        except ValueError:
-            return jsonify({"error": "Formato de data inválido"}), 400
+        except ValueError as e:
+            return jsonify({"error": f"Erro na data: {str(e)}"}), 400
 
+        # Calcular MRC total
         data['mrc_total'] = calculate_mrc_total(data)
+        
+        # Adicionar timestamp
         data['created_at'] = datetime.utcnow()
 
+        # Inserir no MongoDB
         result = patients.insert_one(data)
-        print(f"Documento inserido com ID: {result.inserted_id}")
         
         return jsonify({
             "message": "Dados salvos com sucesso!", 
@@ -65,15 +77,16 @@ def save_mrc_data():
 @app.route('/api/patients', methods=['GET'])
 def get_patients():
     try:
+        print("Buscando pacientes...")
         # Buscar todos os pacientes ordenados por data
         cursor = patients.find({}).sort('created_at', DESCENDING)
         patients_data = []
         
         for patient in cursor:
-            patient['_id'] = str(patient['_id'])  # Converter ObjectId para string
+            patient['_id'] = str(patient['_id'])
             patients_data.append(patient)
 
-        print(f"Retornando {len(patients_data)} pacientes")
+        print(f"Encontrados {len(patients_data)} pacientes")
         return jsonify(patients_data), 200
 
     except Exception as e:
