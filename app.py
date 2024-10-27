@@ -1,17 +1,15 @@
+# app.py
 from flask import Flask, request, jsonify, send_from_directory
 from datetime import datetime
 import os
 from pymongo import MongoClient
 from bson import ObjectId
 import json
-from dotenv import load_dotenv
-
-load_dotenv()
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
 
-# Conexão com MongoDB Atlas
-MONGODB_URI = os.getenv('MONGODB_URI')
+# Configuração MongoDB - usando a string de conexão diretamente
+MONGODB_URI = "mongodb+srv://pardinithales:GLS6KUhOtANEgQvS@cluster0.uqh21.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 client = MongoClient(MONGODB_URI)
 db = client.miopatia_db
 patients = db.patients
@@ -46,7 +44,7 @@ def save_mrc_data():
         
         # Adicionar timestamp
         data['created_at'] = datetime.utcnow()
-        
+
         # Inserir no MongoDB
         result = patients.insert_one(data)
         
