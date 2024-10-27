@@ -1,0 +1,208 @@
+/* Variáveis de cores */
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #34495e;
+    --accent-color: #3498db;
+    --success-color: #2ecc71;
+    --warning-color: #f1c40f;
+    --danger-color: #e74c3c;
+    --light-gray: #f5f6fa;
+    --border-color: #dcdde1;
+}
+
+/* Estilos gerais */
+body {
+    background-color: var(--light-gray);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--primary-color);
+}
+
+.container {
+    max-width: 1200px;
+    padding: 20px;
+}
+
+/* Cabeçalho */
+header {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border-bottom: 3px solid var(--accent-color);
+}
+
+header h1 {
+    color: var(--primary-color);
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.text-muted {
+    color: var(--secondary-color) !important;
+}
+
+/* Cards e Seções */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-bottom: 1.5rem;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 10px 10px 0 0 !important;
+    padding: 1rem 1.25rem;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Formulários */
+.form-label {
+    font-weight: 500;
+    color: var(--secondary-color);
+    margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+/* Checkboxes e Radios personalizados */
+.form-check {
+    margin-bottom: 0.5rem;
+}
+
+.form-check-input {
+    cursor: pointer;
+}
+
+.form-check-input:checked {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+/* Seções condicionais */
+.conditional-section {
+    padding: 1rem;
+    margin-top: 1rem;
+    background-color: rgba(52, 152, 219, 0.05);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+/* Botões */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+/* Validação */
+.form-control.is-invalid {
+    border-color: var(--danger-color);
+    background-image: none;
+}
+
+.invalid-feedback {
+    color: var(--danger-color);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    .card-header h3 {
+        font-size: 1.1rem;
+    }
+
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.conditional-section.show {
+    animation: fadeIn 0.3s ease forwards;
+}
+
+/* Tooltips customizados */
+[data-bs-toggle="tooltip"] {
+    cursor: help;
+}
+
+/* Estilo para campos somente leitura */
+.form-control:read-only {
+    background-color: var(--light-gray);
+    cursor: not-allowed;
+}
+
+/* Estilo para grupos de campos relacionados */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+/* Estilos para seção MRC */
+.mrc-muscle {
+    max-width: 100%;
+}
+
+.alert-info {
+    background-color: #e1f5fe;
+    border-color: #b3e5fc;
+    color: #0288d1;
+}
+
+#mrcTotal {
+    font-size: 1.2em;
+    font-weight: bold;
+}

@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Miopatias - FMRP-USP</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="text-center my-4">
+            <h1>Avaliação de Intolerância ao Exercício em Miopatias</h1>
+            <p class="text-muted">FMRP-USP</p>
+        </header>
+
+        <form id="miopatiaForm" class="needs-validation" novalidate>
+            <!-- Identificação -->
+            <section class="card mb-4">
+                <div class="card-header">
+                    <h3>Identificação</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="form-label">Registro HC</label>
+                            <input type="text" class="form-control" name="registroHC" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Data da Avaliação</label>
+                            <input type="date" class="form-control" name="dataAvaliacao" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Idade</label>
+                            <input type="number" class="form-control" name="idade" required>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dor/Mialgia -->
+            <section class="card mb-4">
+                <div class="card-header">
+                    <h3>Avaliação de Dor</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Presença de Dor</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="dorPresente" value="1" required>
+                            <label class="form-check-label">Sim</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="dorPresente" value="2">
+                            <label class="form-check-label">Não</label>
+                        </div>
+                    </div>
+
+                    <div id="caracteristicasDor" class="conditional-section" style="display: none;">
+                        <!-- Esta seção aparecerá quando houver dor -->
+                        <div class="mb-3">
+                            <label class="form-label">Intensidade da Dor (0-10)</label>
+                            <input type="number" class="form-control" name="intensidadeDor" min="0" max="10">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Padrão da Dor</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="padraoDor" value="constante">
+                                <label class="form-check-label">Constante</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="padraoDor" value="episodica">
+                                <label class="form-check-label">Episódica</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Fadiga -->
+            <section class="card mb-4">
+                <div class="card-header">
+                    <h3>Avaliação da Fadiga</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Presença de Fadiga</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="fadigaPresente" value="1" required>
+                            <label class="form-check-label">Sim</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="fadigaPresente" value="2">
+                            <label class="form-check-label">Não</label>
+                        </div>
+                    </div>
+
+                    <div id="caracteristicasFadiga" class="conditional-section" style="display: none;">
+                        <div class="mb-3">
+                            <label class="form-label">Intensidade da Fadiga (0-10)</label>
+                            <input type="number" class="form-control" name="intensidadeFadiga" min="0" max="10">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Principal Fator Desencadeante</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="fatorFadiga" value="atividadeFisica">
+                                <label class="form-check-label">Atividade Física</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="fatorFadiga" value="estresseEmocional">
+                                <label class="form-check-label">Estresse Emocional</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="fatorFadiga" value="jejum">
+                                <label class="form-check-label">Jejum</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="fatorFadiga" value="outro">
+                                <label class="form-check-label">Outro</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Câibras -->
+            <section class="card mb-4">
+                <div class="card-header">
+                    <h3>Avaliação de Cãibras</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Presença de Cãibras</label>
+                        <select class="form-select" name="caibras" required>
+                            <option value="">Selecione</option>
+                            <option value="sim">Sim</option>
+                            <option value="nao">Não</option>
+                        </select>
+                        
+                        <div id="caibrasFields" style="display: none;">
+                            <div class="mt-3">
+                                <label class="form-label">Frequência das Cãibras</label>
+                                <select class="form-select" name="frequenciaCaibras">
+                                    <option value="">Selecione</option>
+                                    <option value="diaria">Diária</option>
+                                    <option value="semanal">Semanal</option>
+                                    <option value="mensal">Mensal</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <label class="form-label">Intensidade das Cãibras</label>
+                                <select class="form-select" name="intensidadeCaibras">
+                                    <option value="">Selecione</option>
+                                    <option value="leve">Leve</option>
+                                    <option value="moderada">Moderada</option>
+                                    <option value="intensa">Intensa</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="caracteristicasCaibras" class="conditional-section" style="display: none;">
+                        <div class="mb-3">
+                            <label class="form-label">Frequência das Cãibras</label>
+                            <select class="form-select" name="frequenciaCaibras">
+                                <option value="">Selecione</option>
+                                <option value="diaria">Diária</option>
+                                <option value="semanal">Semanal</option>
+                                <option value="mensal">Mensal</option>
+                                <option value="ocasional">Ocasional</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Localização Principal</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="localizacaoCaibras" value="membrosInferiores">
+                                <label class="form-check-label">Membros Inferiores</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="localizacaoCaibras" value="membrosSuperiores">
+                                <label class="form-check-label">Membros Superiores</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="localizacaoCaibras" value="tronco">
+                                <label class="form-check-label">Tronco</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- História Familiar -->
+            <section class="card mb-4">
+                <div class="card-header">
+                    <h3>História Familiar</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Histórico Familiar de Doenças Neuromusculares</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="historicoFamiliar" value="1" required>
+                            <label class="form-check-label">Sim</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="historicoFamiliar" value="2">
+                            <label class="form-check-label">Não</label>
+                        </div>
+                    </div>
+
+                    <div id="detalhesHistoricoFamiliar" class="conditional-section" style="display: none;">
+                        <div class="mb-3">
+                            <label class="form-label">Parentesco Acometido</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="parentescoAcometido" value="pais">
+                                <label class="form-check-label">Pais</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="parentescoAcometido" value="irmaos">
+                                <label class="form-check-label">Irmãos</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="parentescoAcometido" value="filhos">
+                                <label class="form-check-label">Filhos</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Manifestações Sistêmicas -->
+            <section class="card mb-4">
+                <div class="card-header">
+                    <h3>Manifestações Sistêmicas</h3>
+                </div>
+                <div class="card-body">
+                    <!-- Cardíacas -->
+                    <div class="mb-4">
+                        <h4>Manifestações Cardíacas</h4>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="manifestacoesCardiacas" value="arritmia">
+                            <label class="form-check-label">Arritmia</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="manifestacoesCardiacas" value="cardiomiopatia">
+                            <label class="form-check-label">Cardiomiopatia</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="manifestacoesCardiacas" value="bloqueioConducao">
+                            <label class="form-check-label">Bloqueio de Condução</label>
+                        </div>
+                    </div>
+
+                    <!-- Respiratórias -->
+                    <div class="mb-4">
+                        <h4>Manifestações Respiratórias</h4>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="manifestacoesRespiratorias" value="dispneia">
+                            <label class="form-check-label">Dispneia</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="manifestacoesRespiratorias" value="apneiaSono">
+                            <label class="form-check-label">Apneia do Sono</label>
+                        </div>
+                    </div>
+
+                    <!-- Endócrinas -->
+                    <div class="mb-4">
+                        <h4>Manifestações Endócrinas</h4>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="manifestacoesEndocrinas" value="diabetes">
+                            <label class="form-check-label">Diabetes Mellitus</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="manifestacoesEndocrinas" value="tireoide">
+                            <label class="form-check-label">Distúrbios Tireoidianos</label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Avaliação Funcional -->
+            <section class="card mb-4">
+                <div class="card-header">
+                    <h3>Avaliação Funcional</h3>
+                </div>
+                <div class="card-body">
+                    <!-- MRC -->
+                    <div class="mb-4">
+                        <h4>Escala MRC (Medical Research Council)</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>Membros Superiores</h5>
+                                <!-- Deltoide -->
+                                <div class="mb-2">
+                                    <label class="form-label">Deltoide</label>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <select class="form-select mrc-muscle" name="mrcDeltoideDireito">
+                                                <option value="">Direito</option>
+                                                <option value="5">5 - Força normal</option>
+                                                <option value="4">4 - Movimento contra resistência</option>
+                                                <option value="3">3 - Movimento contra gravidade</option>
+                                                <option value="2">2 - Movimento eliminando gravidade</option>
+                                                <option value="1">1 - Contração sem movimento</option>
+                                                <option value="0">0 - Sem contração</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-6">
+                                            <select class="form-select mrc-muscle" name="mrcDeltoideEsquerdo">
+                                                <option value="">Esquerdo</option>
+                                                <option value="5">5 - Fora normal</option>
+                                                <option value="4">4 - Movimento contra resistência</option>
+                                                <option value="3">3 - Movimento contra gravidade</option>
+                                                <option value="2">2 - Movimento eliminando gravidade</option>
+                                                <option value="1">1 - Contração sem movimento</option>
+                                                <option value="0">0 - Sem contração</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+<!-- Bíceps -->
+<div class="mb-2">
+    <label class="form-label">Bíceps</label>
+    <div class="row">
+        <div class="col-6">
+            <select class="form-select mrc-muscle" name="mrcBicepsDireito">
+                <option value="">Direito</option>
+                <option value="5">5 - Força normal</option>
+                <option value="4">4 - Movimento contra resistência</option>
+                <option value="3">3 - Movimento contra gravidade</option>
+                <option value="2">2 - Movimento eliminando gravidade</option>
+                <option value="1">1 - Contração sem movimento</option>
+                <option value="0">0 - Sem contração</option>
+            </select>
+        </div>
+        <div class="col-6">
+            <select class="form-select mrc-muscle" name="mrcBicepsEsquerdo">
+                <option value="">Esquerdo</option>
+                <option value="5">5 - Força normal</option>
+                <option value="4">4 - Movimento contra resistência</option>
+                <option value="3">3 - Movimento contra gravidade</option>
+                <option value="2">2 - Movimento eliminando gravidade</option>
+                <option value="1">1 - Contração sem movimento</option>
+                <option value="0">0 - Sem contração</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<!-- Extensor do Carpo -->
+<div class="mb-2">
+    <label class="form-label">Extensor do Carpo</label>
+    <div class="row">
+        <div class="col-6">
+            <select class="form-select mrc-muscle" name="mrcExtensorCarpoDireito">
+                <option value="">Direito</option>
+                <option value="5">5 - Força normal</option>
+                <option value="4">4 - Movimento contra resistência</option>
+                <option value="3">3 - Movimento contra gravidade</option>
+                <option value="2">2 - Movimento eliminando gravidade</option>
+                <option value="1">1 - Contração sem movimento</option>
+                <option value="0">0 - Sem contração</option>
+            </select>
+        </div>
+        <div class="col-6">
+            <select class="form-select mrc-muscle" name="mrcExtensorCarpoEsquerdo">
+                <option value="">Esquerdo</option>
+                <option value="5">5 - Força normal</option>
+                <option value="4">4 - Movimento contra resistência</option>
+                <option value="3">3 - Movimento contra gravidade</option>
+                <option value="2">2 - Movimento eliminando gravidade</option>
+                <option value="1">1 - Contração sem movimento</option>
+                <option value="0">0 - Sem contração</option>
+            </select>
+        </div>
+    </div>
+</div>
+</div>
+<div class="col-md-6">
+<h5>Membros Inferiores</h5>
+<!-- Iliopsoas -->
+<div class="mb-2">
+    <label class="form-label">Iliopsoas</label>
+    <div class="row">
+        <div class="col-6">
+            <select class="form-select mrc-muscle" name="mrcIliopsoasDireito">
+                <option value="">Direito</option>
+                <option value="5">5 - Força normal</option>
+                <option value="4">4 - Movimento contra resistência</option>
+                <option value="3">3 - Movimento contra gravidade</option>
+                <option value="2">2 - Movimento eliminando gravidade</option>
+                <option value="1">1 - Contração sem movimento</option>
+                <option value="0">0 - Sem contração</option>
+            </select>
+        </div>
+        <div class="col-6">
+            <select class="form-select mrc-muscle" name="mrcIliopsoasEsquerdo">
+                <option value="">Esquerdo</option>
+                <option value="5">5 - Força normal</option>
+                <option value="4">4 - Movimento contra resistência</option>
+                <option value="3">3 - Movimento contra gravidade</option>
+                <option value="2">2 - Movimento eliminando gravidade</option>
+                <option value="1">1 - Contração sem movimento</option>
+                <option value="0">0 - Sem contração</option>
+            </select>
+        </div>
+    </div>
+</div>
+<!-- Reto Femoral -->
+<div class="mb-2">
+    <label class="form-label">Reto Femoral</label>
+    <div class="row">
+        <div class="col-6">
+            <select class="form-select mrc-muscle" name="mrcRetoFemoralDireito">
+                <option value="">Direito</option>
+                <option value="5">5 - Força normal</option>
+                <option value="4">4 - Movimento contra resistência</option>
+                <option value="3">3 - Movimento contra gravidade</option>
+                <option value="2">2 - Movimento eliminando gravidade</option>
+                <option value="1">1 - Contração sem movimento</option>
+                <option value="0">0 - Sem contração</option>
+            </select>
+        </div>
+        <div class="col-6">
+            <select class="form-select mrc-muscle" name="mrcRetoFemoralEsquerdo">
+                <option value="">Esquerdo</option>
+                <option value="5">5 - Força normal</option>
+                <option value="4">4 - Movimento contra resistência</option>
+                <option value="3">3 - Movimento contra gravidade</option>
+                <option value="2">2 - Movimento eliminando gravidade</option>
+                <option value="1">1 - Contração sem movimento</option>
+                <option value="0">0 - Sem contração</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<!-- Extensor do Pé -->
+<div class="mb-2">
+    <label class="form-label">Extensor do Pé</label>
+    <div class="row">
+        <div class="col-6">
+            <select class="form-select mrc-muscle" name="mrcExtensorPeDireito">
+                <option value="">Direito</option>
+                <option value="5">5 - Força normal</option>
+                <option value="4">4 - Movimento contra resistência</option>
+                <option value="3">3 - Movimento contra gravidade</option>
+                <option value="2">2 - Movimento eliminando gravidade</option>
+                <option value="1">1 - Contração sem movimento</option>
+                <option value="0">0 - Sem contração</option>
+            </select>
+        </div>
+        <div class="col-6">
+            <select class="form-select mrc-muscle" name="mrcExtensorPeEsquerdo">
+                <option value="">Esquerdo</option>
+                <option value="5">5 - Força normal</option>
+                <option value="4">4 - Movimento contra resistência</option>
+                <option value="3">3 - Movimento contra gravidade</option>
+                <option value="2">2 - Movimento eliminando gravidade</option>
+                <option value="1">1 - Contração sem movimento</option>
+                <option value="0">0 - Sem contração</option>
+            </select>
+        </div>
+    </div>
+</div>
+</div>
+<div class="col-12 mt-3">
+<div class="alert alert-info">
+    <strong>Score MRC Total: </strong>
+    <span id="mrcTotal">0</span>/60
+    <small class="d-block mt-1 text-muted">
+        (Calculado automaticamente com base nos valores selecionados acima)
+    </small>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Exames Laboratoriais -->
+<div class="row">
+<div class="col-md-3">
+<h4>CPK</h4>
+<div class="mb-3">
+<label class="form-label">Valor Mínimo</label>
+<input type="number" class="form-control" name="cpkMinimo">
+</div>
+<div class="mb-3">
+<label class="form-label">Valor Máximo</label>
+<input type="number" class="form-control" name="cpkMaximo">
+</div>
+</div>
+<div class="col-md-3">
+<h4>Lactato</h4>
+<div class="mb-3">
+<label class="form-label">Valor Mínimo</label>
+<input type="number" class="form-control" name="lactatoMinimo" step="0.1">
+</div>
+<div class="mb-3">
+<label class="form-label">Valor Máximo</label>
+<input type="number" class="form-control" name="lactatoMaximo" step="0.1">
+</div>
+</div>
+<div class="col-md-3">
+<h4>TGO/AST</h4>
+<div class="mb-3">
+<label class="form-label">Valor Mínimo</label>
+<input type="number" class="form-control" name="tgoMinimo">
+</div>
+<div class="mb-3">
+<label class="form-label">Valor Máximo</label>
+<input type="number" class="form-control" name="tgoMaximo">
+</div>
+</div>
+<div class="col-md-3">
+<h4>TGP/ALT</h4>
+<div class="mb-3">
+<label class="form-label">Valor Mínimo</label>
+<input type="number" class="form-control" name="tgpMinimo">
+</div>
+<div class="mb-3">
+<label class="form-label">Valor Máximo</label>
+<input type="number" class="form-control" name="tgpMaximo">
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Botões do Formulário -->
+<div class="row mt-4 mb-4">
+<div class="col-12 d-flex justify-content-end gap-2">
+<button type="button" class="btn btn-secondary" id="resetButton">Limpar</button>
+<button type="submit" class="btn btn-primary">Salvar</button>
+</div>
+</div>
+</form>
+
+<!-- Botão de Exportação -->
+<div class="row mt-4 mb-4">
+<div class="col-12">
+<button type="button" class="btn btn-success" id="exportButton">
+Exportar Dados para CSV
+</button>
+</div>
+</div>
+
+<!-- Lista de Pacientes -->
+<section class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h3>Pacientes Cadastrados</h3>
+        <div>
+            <button type="button" class="btn btn-primary" id="refreshPatientsButton">
+                <i class="fas fa-sync-alt"></i> Atualizar Lista
+            </button>
+            <button type="button" class="btn btn-success" id="exportButton">
+                <i class="fas fa-file-export"></i> Exportar CSV
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped" id="patientsTable">
+                <thead>
+                    <tr>
+                        <th>Registro HC</th>
+                        <th>Data Avaliação</th>
+                        <th>MRC Total</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dados serão inseridos aqui via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- Modal de Detalhes do Paciente -->
+<div class="modal fade" id="patientDetailsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalhes do Paciente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Registro HC e Data -->
+                <div class="mb-3">
+                    <strong>Registro HC:</strong> <span id="modalRegistroHC"></span><br>
+                    <strong>Data da Avaliação:</strong> <span id="modalDataAvaliacao"></span>
+                </div>
+
+                <!-- Valores MRC -->
+                <div class="mb-3">
+                    <h6>Valores MRC</h6>
+                    <div class="row">
+                        <div class="col-6">
+                            <strong>Deltóide D:</strong> <span id="modalDeltoideDireito"></span><br>
+                            <strong>Deltóide E:</strong> <span id="modalDeltoideEsquerdo"></span><br>
+                            <strong>Bíceps D:</strong> <span id="modalBicepsDireito"></span><br>
+                            <strong>Bíceps E:</strong> <span id="modalBicepsEsquerdo"></span><br>
+                            <strong>Ext. Carpo D:</strong> <span id="modalExtensorCarpoDireito"></span><br>
+                            <strong>Ext. Carpo E:</strong> <span id="modalExtensorCarpoEsquerdo"></span>
+                        </div>
+                        <div class="col-6">
+                            <strong>Iliopsoas D:</strong> <span id="modalIliopsoasDireito"></span><br>
+                            <strong>Iliopsoas E:</strong> <span id="modalIliopsoasEsquerdo"></span><br>
+                            <strong>Reto Femoral D:</strong> <span id="modalRetoFemoralDireito"></span><br>
+                            <strong>Reto Femoral E:</strong> <span id="modalRetoFemoralEsquerdo"></span><br>
+                            <strong>Ext. Pé D:</strong> <span id="modalExtensorPeDireito"></span><br>
+                            <strong>Ext. Pé E:</strong> <span id="modalExtensorPeEsquerdo"></span>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <strong>MRC Total:</strong> <span id="modalMrcTotal"></span>/60
+                    </div>
+                </div>
+
+                <!-- Exames -->
+                <div class="mb-3">
+                    <h6>Exames Laboratoriais</h6>
+                    <strong>CPK:</strong> <span id="modalCpk"></span><br>
+                    <strong>Lactato:</strong> <span id="modalLactato"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/static/js/main.js"></script>
+</body>
+</html>
