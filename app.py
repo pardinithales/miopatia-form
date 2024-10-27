@@ -2,17 +2,26 @@
 from flask import Flask, request, jsonify, send_from_directory
 from datetime import datetime
 import os
-from pymongo import MongoClient
+from pymongo import MongoClient, ASCENDING, DESCENDING
 from bson import ObjectId
 import json
+from flask_cors import CORS  # Adicionar suporte CORS
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
+CORS(app)  # Habilitar CORS para todas as rotas
 
-# Configuração MongoDB - usando a string de conexão diretamente
-MONGODB_URI = "mongodb+srv://pardinithales:GLS6KUhOtANEgQvS@cluster0.uqh21.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-client = MongoClient(MONGODB_URI)
-db = client.miopatia_db
-patients = db.patients
+# Configuração MongoDB
+try:
+    MONGODB_URI = "mongodb+srv://pardinithales:GLS6KUhOtANEgQvS@cluster0.uqh21.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+    client = MongoClient(MONGODB_URI, serverSelectionTimeoutMS=5000)
+    # Testar a conexão
+    client.server_info()
+    print("Conexão com MongoDB estabelecida com sucesso!")
+    db = client.miopatia_db
+    patients = db.patients
+except Exception as e:
+    print(f"Erro ao conectar com MongoDB: {e}")
+    raise
 
 def calculate_mrc_total(data):
     mrc_fields = [
@@ -32,21 +41,17 @@ def save_mrc_data():
         if not data:
             return jsonify({"error": "Dados não fornecidos"}), 400
 
-        # Converter a data para o formato desejado
         try:
             date_obj = datetime.strptime(data.get('dataAvaliacao', ''), '%Y-%m-%d')
             data['dataAvaliacao'] = date_obj.strftime('%d/%m/%Y')
         except ValueError:
             return jsonify({"error": "Formato de data inválido"}), 400
 
-        # Calcular MRC total
         data['mrc_total'] = calculate_mrc_total(data)
-        
-        # Adicionar timestamp
         data['created_at'] = datetime.utcnow()
 
-        # Inserir no MongoDB
         result = patients.insert_one(data)
+        print(f"Documento inserido com ID: {result.inserted_id}")
         
         return jsonify({
             "message": "Dados salvos com sucesso!", 
@@ -61,15 +66,16 @@ def save_mrc_data():
 def get_patients():
     try:
         # Buscar todos os pacientes ordenados por data
-        cursor = patients.find({}).sort('created_at', -1)
-        
-        # Converter ObjectId para string
+        cursor = patients.find({}).sort('created_at', DESCENDING)
         patients_data = []
-        for patient in cursor:
-            patient['_id'] = str(patient['_id'])
-            patients_data.append(patient)
         
+        for patient in cursor:
+            patient['_id'] = str(patient['_id'])  # Converter ObjectId para string
+            patients_data.append(patient)
+
+        print(f"Retornando {len(patients_data)} pacientes")
         return jsonify(patients_data), 200
+
     except Exception as e:
         print(f"Erro ao recuperar pacientes: {e}")
         return jsonify({"error": str(e)}), 500
@@ -85,13 +91,12 @@ def serve_static(filename):
 @app.route('/api/export/csv', methods=['GET'])
 def export_csv():
     try:
-        cursor = patients.find({}).sort('created_at', -1)
+        cursor = patients.find({}).sort('created_at', DESCENDING)
         data = list(cursor)
         
         if not data:
             return jsonify({"error": "Nenhum dado disponível"}), 404
 
-        # Definir cabeçalhos
         headers = [
             'Registro HC', 'Data Avaliação', 'MRC Total',
             'Deltóide Direito', 'Deltóide Esquerdo',
