@@ -2,58 +2,29 @@
 from flask import Flask, request, jsonify, send_from_directory
 from datetime import datetime
 import os
-from pymongo import MongoClient, ASCENDING, DESCENDING
+from pymongo import MongoClient
 from bson import ObjectId
 import json
 from flask_cors import CORS
-import time
 import certifi
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
 CORS(app)
 
-# Configuração MongoDB com timeout e certificado SSL
-MONGODB_URI = "mongodb+srv://pardinithales:GLS6KUhOtANEgQvS@cluster0.uqh21.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-
-print("Iniciando conexão com MongoDB...")
-client = MongoClient(
-    MONGODB_URI,
-    serverSelectionTimeoutMS=5000,
-    connectTimeoutMS=5000,
-    socketTimeoutMS=5000,
-    tlsCAFile=certifi.where()  # Adiciona certificado SSL
-)
-
-try:
-    # Testar a conexão
-    db = client.get_database('miopatia_db')
-    patients = db.get_collection('patients')
-    db.command('ping')
-    print("Conexão com MongoDB estabelecida com sucesso!")
-except Exception as e:
-    print(f"Erro na conexão inicial com MongoDB: {e}")
-    # Não raise aqui, permite que a aplicação continue mesmo com erro inicial
-
-@app.before_request
-def before_request():
-    # Verificar conexão antes de cada requisição
-    try:
-        if not hasattr(app, 'mongodb_connected'):
-            db.command('ping')
-            app.mongodb_connected = True
-    except:
-        app.mongodb_connected = False
-
-def calculate_mrc_total(data):
-    mrc_fields = [
-        'mrcDeltoideDireito', 'mrcDeltoideEsquerdo',
-        'mrcBicepsDireito', 'mrcBicepsEsquerdo',
-        'mrcExtensorCarpoDireito', 'mrcExtensorCarpoEsquerdo',
-        'mrcIliopsoasDireito', 'mrcIliopsoasEsquerdo',
-        'mrcRetoFemoralDireito', 'mrcRetoFemoralEsquerdo',
-        'mrcExtensorPeDireito', 'mrcExtensorPeEsquerdo'
-    ]
-    return sum(int(data.get(field, 0) or 0) for field in mrc_fields)
+def get_database():
+    """
+    Configuração lazy do MongoDB - só conecta quando necessário
+    """
+    if not hasattr(get_database, 'client'):
+        MONGODB_URI = "mongodb+srv://pardinithales:GLS6KUhOtANEgQvS@cluster0.uqh21.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+        get_database.client = MongoClient(
+            MONGODB_URI,
+            serverSelectionTimeoutMS=5000,
+            connectTimeoutMS=5000,
+            socketTimeoutMS=5000,
+            tlsCAFile=certifi.where()
+        )
+    return get_database.client.miopatia_db
 
 @app.route('/api/mrc', methods=['POST'])
 def save_mrc_data():
@@ -70,13 +41,22 @@ def save_mrc_data():
             return jsonify({"error": f"Erro na data: {str(e)}"}), 400
 
         # Calcular MRC total
-        data['mrc_total'] = calculate_mrc_total(data)
+        mrc_fields = [
+            'mrcDeltoideDireito', 'mrcDeltoideEsquerdo',
+            'mrcBicepsDireito', 'mrcBicepsEsquerdo',
+            'mrcExtensorCarpoDireito', 'mrcExtensorCarpoEsquerdo',
+            'mrcIliopsoasDireito', 'mrcIliopsoasEsquerdo',
+            'mrcRetoFemoralDireito', 'mrcRetoFemoralEsquerdo',
+            'mrcExtensorPeDireito', 'mrcExtensorPeEsquerdo'
+        ]
+        data['mrc_total'] = sum(int(data.get(field, 0) or 0) for field in mrc_fields)
         
         # Adicionar timestamp
         data['created_at'] = datetime.utcnow()
 
         # Inserir no MongoDB
-        result = patients.insert_one(data)
+        db = get_database()
+        result = db.patients.insert_one(data)
         
         return jsonify({
             "message": "Dados salvos com sucesso!", 
@@ -90,16 +70,15 @@ def save_mrc_data():
 @app.route('/api/patients', methods=['GET'])
 def get_patients():
     try:
-        print("Buscando pacientes...")
         # Buscar todos os pacientes ordenados por data
-        cursor = patients.find({}).sort('created_at', DESCENDING)
+        db = get_database()
+        cursor = db.patients.find({}).sort('created_at', -1)
         patients_data = []
         
         for patient in cursor:
             patient['_id'] = str(patient['_id'])
             patients_data.append(patient)
 
-        print(f"Encontrados {len(patients_data)} pacientes")
         return jsonify(patients_data), 200
 
     except Exception as e:
@@ -117,7 +96,8 @@ def serve_static(filename):
 @app.route('/api/export/csv', methods=['GET'])
 def export_csv():
     try:
-        cursor = patients.find({}).sort('created_at', DESCENDING)
+        db = get_database()
+        cursor = db.patients.find({}).sort('created_at', -1)
         data = list(cursor)
         
         if not data:
@@ -177,4 +157,5 @@ def export_csv():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
