@@ -1,4 +1,4 @@
-﻿from wsgi import app
+﻿from app import app
 
 def handler(request):
-    return app
+    return app(request)
