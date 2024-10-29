@@ -1,5 +1,4 @@
-﻿from app import app
+﻿from wsgi import app
 
-# Vercel handler
-def handler(request, context):
-    return app(request)
+def handler(request):
+    return app
